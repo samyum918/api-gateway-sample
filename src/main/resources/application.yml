@@ -1,0 +1,33 @@
+server:
+  port: 8092
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: category_route
+          uri: http://localhost:8091
+          predicates:
+            - Path=/api
+            - name: ReadBody
+              args:
+                inClass: 'java.lang.String'
+                predicate: '#{@globalApplyPredicate}'
+            - name: MessageType
+              args:
+                messageType: '1001'
+          filters:
+            - RewritePath=/api,/api/category/all
+        - id: customer_route
+          uri: http://localhost:8091
+          predicates:
+            - Path=/api
+            - name: ReadBody
+              args:
+                inClass: 'java.lang.String'
+                predicate: '#{@globalApplyPredicate}'
+            - name: MessageType
+              args:
+                messageType: '1002'
+          filters:
+            - RewritePath=/api,/api/customer/get-customer-info
